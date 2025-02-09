@@ -1,0 +1,51 @@
+@font-face {
+	font-family: "GlobalSV";
+	src: local("GlobalSV"),
+	 url("./assets/fonts/Stardew_Valley.ttf") format("truetype");
+	font-weight: soft;
+}
+
+#root {
+  max-width: 1280px;
+  margin: 0 0;
+  padding: 2rem;
+  text-align: center;
+  justify-content: center;
+}
+
+.headText {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	/*border: 1px solid red;*/
+}
+
+.textBgImg {
+	position: relative;
+	/*border: 1px solid blue;*/
+}
+
+.textOnImage {
+	position: absolute;
+	bottom: 0;
+	text-align: center;
+	/*border: 1px solid green;*/
+	white-space: nowrap;
+}
+
+.title1 {
+	font-family: GlobalSV;
+	font-size: 60px;
+	margin-bottom: 10px;
+	color: #6b3710;
+	text-shadow: 2px 2px 2px #4b270b;
+}
+
+.title2 {
+	font-family: GlobalSV;
+	font-size: 40px;
+	margin-top: 0px;
+	margin-bottom: -3px;
+	color: #6b3710;
+	text-shadow: 1px 1px 2px #4b270b;
+}
