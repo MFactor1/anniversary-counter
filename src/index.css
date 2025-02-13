@@ -34,6 +34,7 @@ body {
   min-width: 100vw;
   min-height: 100vh;
   justify-content: center;
+  overflow: hidden;
 }
 
 h1 {
