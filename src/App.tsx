@@ -9,10 +9,11 @@ import matthewBlush from './assets/MattBlush.png'
 import useCountdown from './utils/countdown'
 import AnimatedImage from './utils/AnimatedImage'
 import ImageButton from './utils/ImageButton'
+import Character from './components/Character'
 
 function App() {
-  //const { days, hours, minutes, seconds } = useCountdown(7, 1, 0, 0);
-  const { days, hours, minutes, seconds } = useCountdown(2, 13, 0, 4);
+  const { days, hours, minutes, seconds } = useCountdown(7, 1, 0, 0);
+  //const { days, hours, minutes, seconds } = useCountdown(2, 13, 0, 4);
   const [isAnniversary, setIsAnniversary] = useState(false);
 
   useEffect(() => {
@@ -42,24 +43,18 @@ function App() {
         </div>
       </div>
       <div className='characters'>
-        <ImageButton style = {{ position: "absolute", bottom: "0px", right: "10vw", width: "256px", height: "256px"}}>
-          <AnimatedImage
-            isAnimating = {isAnniversary}
-            baseImage = {hailey}
-            secondaryImage= {haileyBlush}
-            frequency = {4}
-            duration = {0.5}
-          />
-        </ImageButton>
-        <ImageButton style = {{ position: "absolute", bottom: "0px", left: "10vw", width: "256px", height: "256px"}}>
-          <AnimatedImage
-            isAnimating = {isAnniversary}
-            baseImage = {matthew}
-            secondaryImage= {matthewBlush}
-            frequency = {4}
-            duration = {0.5}
-          />
-        </ImageButton>
+        <Character
+          isAnniversary = {isAnniversary}
+          baseImage = {hailey}
+          secondaryImage = {haileyBlush}
+          style = {{ position: "absolute", bottom: "0px", right: "10vw"}}
+        />
+        <Character
+          isAnniversary = {isAnniversary}
+          baseImage = {matthew}
+          secondaryImage = {matthewBlush}
+          style = {{ position: "absolute", bottom: "0px", left: "10vw"}}
+        />
       </div>
       <div className='counter'>
         <p className='counterText'>
