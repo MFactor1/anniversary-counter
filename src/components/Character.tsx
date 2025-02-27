@@ -1,4 +1,5 @@
 import { useState, CSSProperties } from 'react';
+import { v4 as uuidv4 } from "uuid";
 import ImageButton from '../utils/ImageButton';
 import AnimatedImage from '../utils/AnimatedImage';
 import SeedDisplay from './SeedDisplay';
@@ -22,12 +23,60 @@ interface CharacterProps {
   style?: CSSProperties;
 }
 
+interface SelfDestructSeedProps {
+  id: string;
+  image: string;
+  offset: number;
+  remove: (id: string) => void;
+}
+
+const SelfDestructSeed: React.FC<SelfDestructSeedProps> = ({ id, image, offset, remove }) => {
+  setTimeout(() => remove(id), 1000);
+
+  return (
+    <SeedDisplay
+      image = {image}
+      timeout = {300}
+      style = {{ scale: 0.4, position: "absolute", bottom: "100px", left: `${offset}px`}}
+    />
+  );
+};
+
 const Character: React.FC<CharacterProps> = ({ isAnniversary, baseImage, secondaryImage, style }) => {
+  const [seedComponents, setSeedComponents] = useState<{ id: string, image:string, offset: number }[]>([]);
+  const [seedCooldown, setSeedCooldown] = useState(false);
+
+  function randInt(max: number) {
+    return Math.floor(Math.random() * max);
+  }
+
+  function addSeed() {
+    if (!seedCooldown) {
+      setSeedCooldown(true);
+      setTimeout(() => setSeedCooldown(false), 200);
+      const newSeed = { id: uuidv4(), image: seeds[randInt(seeds.length)], offset: randInt(100) - 50 };
+      setSeedComponents((prev) => [...prev, newSeed]);
+    }
+  }
+
+  function removeSeed(id: string) {
+    setSeedComponents((prev) => prev.filter((seedComp) => seedComp.id !== id));
+  }
+
   return (
     <div style = {style}>
+      {seedComponents.map((seedComp) => (
+        <SelfDestructSeed
+          key = {seedComp.id}
+          id = {seedComp.id}
+          image = {seedComp.image}
+          offset = {seedComp.offset}
+          remove = {removeSeed}
+        />
+      ))}
       <ImageButton
         style = {{width: "256px", height: "256px"}}
-        onClick = {() => console.log("Clicked Character")}
+        onClick = {() => addSeed()}
       >
         <AnimatedImage
           isAnimating = {isAnniversary}

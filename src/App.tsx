@@ -47,13 +47,13 @@ function App() {
           isAnniversary = {isAnniversary}
           baseImage = {hailey}
           secondaryImage = {haileyBlush}
-          style = {{ position: "absolute", bottom: "0px", right: "10vw"}}
+          style = {{ position: "absolute", bottom: "0px", right: "10vw", width: "256px", height: "256px"}}
         />
         <Character
           isAnniversary = {isAnniversary}
           baseImage = {matthew}
           secondaryImage = {matthewBlush}
-          style = {{ position: "absolute", bottom: "0px", left: "10vw"}}
+          style = {{ position: "absolute", bottom: "0px", left: "10vw", width: "256px", height: "256px"}}
         />
       </div>
       <div className='counter'>
