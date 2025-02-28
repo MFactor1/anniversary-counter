@@ -11,6 +11,10 @@ import AnimatedImage from './utils/AnimatedImage'
 import ImageButton from './utils/ImageButton'
 import Character from './components/Character'
 
+function newSeed(seed: number) {
+  console.log(`Added seed ${seed}`);
+}
+
 function App() {
   const { days, hours, minutes, seconds } = useCountdown(7, 1, 0, 0);
   //const { days, hours, minutes, seconds } = useCountdown(2, 13, 0, 4);
@@ -47,12 +51,14 @@ function App() {
           isAnniversary = {isAnniversary}
           baseImage = {hailey}
           secondaryImage = {haileyBlush}
+          newSeedCallback = {newSeed}
           style = {{ position: "absolute", bottom: "0px", right: "10vw", width: "256px", height: "256px"}}
         />
         <Character
           isAnniversary = {isAnniversary}
           baseImage = {matthew}
           secondaryImage = {matthewBlush}
+          newSeedCallback = {newSeed}
           style = {{ position: "absolute", bottom: "0px", left: "10vw", width: "256px", height: "256px"}}
         />
       </div>

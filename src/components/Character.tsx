@@ -20,6 +20,7 @@ interface CharacterProps {
   isAnniversary: boolean;
   baseImage: string;
   secondaryImage: string;
+  newSeedCallback?: (seed: number) => void;
   style?: CSSProperties;
 }
 
@@ -42,7 +43,7 @@ const SelfDestructSeed: React.FC<SelfDestructSeedProps> = ({ id, image, offset, 
   );
 };
 
-const Character: React.FC<CharacterProps> = ({ isAnniversary, baseImage, secondaryImage, style }) => {
+const Character: React.FC<CharacterProps> = ({ isAnniversary, baseImage, secondaryImage, newSeedCallback, style }) => {
   const [seedComponents, setSeedComponents] = useState<{ id: string, image:string, offset: number }[]>([]);
   const [seedCooldown, setSeedCooldown] = useState(false);
 
@@ -54,7 +55,9 @@ const Character: React.FC<CharacterProps> = ({ isAnniversary, baseImage, seconda
     if (!seedCooldown) {
       setSeedCooldown(true);
       setTimeout(() => setSeedCooldown(false), 200);
-      const newSeed = { id: uuidv4(), image: seeds[randInt(seeds.length)], offset: randInt(100) - 50 };
+      const seedNum = randInt(seeds.length)
+      const newSeed = { id: uuidv4(), image: seeds[seedNum], offset: randInt(100) - 50 };
+      if (newSeedCallback) newSeedCallback(seedNum);
       setSeedComponents((prev) => [...prev, newSeed]);
     }
   }
