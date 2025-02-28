@@ -10,8 +10,10 @@ import useCountdown from './utils/countdown'
 import Character from './components/Character'
 import SeedCounters from './components/SeedCounters'
 
+let ws: WebSocket;
 let seedsMattInc: number[] = new Array(9).fill(0);
 let seedsHailInc: number[] = new Array(9).fill(0);
+let seedUpdate: boolean = false;
 
 function App() {
   const [seedsMatt, setSeedsMatt] = useState<number[]>(Array(9).fill(0));
@@ -22,13 +24,112 @@ function App() {
 
   const newSeed = (id: string, seed: number) => {
     if (id == "matthew") {
-      seedsMattInc[seed]++
+      seedsMattInc[seed]++;
+      seedUpdate = true;
       setSeedsMatt((prev) => prev.map((val, i) => (i === seed ? val + 1 : val)));
     } else if (id == "hailey") {
       seedsHailInc[seed]++;
+      seedUpdate = true;
       setSeedsHail((prev) => prev.map((val, i) => (i === seed ? val + 1 : val)));
     }
-  }
+  };
+
+  useEffect(() => {
+    const serverUpdate = () => {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        if (seedUpdate) {
+          ws.send(JSON.stringify({ type: "increment", matt: seedsMattInc, hail: seedsHailInc }));
+          seedUpdate = false;
+          seedsMattInc.fill(0);
+          seedsHailInc.fill(0);
+        }
+      } else {
+        console.log("Socket closed or null");
+      }
+    }
+
+    const updateInterval = setInterval(serverUpdate, 1000);
+    return () => clearInterval(updateInterval);
+  }, []);
+
+  useEffect(() => {
+    console.log("starting useeffect");
+    if (!ws) {
+      console.log("creating websocket");
+      ws = new WebSocket("ws://localhost:3001/");
+    }
+    if (ws.readyState == 3) {
+      console.log("recreating websocket");
+      ws = new WebSocket("ws://localhost:3001/");
+    }
+    ws.onopen = () => {
+      console.log("Connected to websocket server");
+      console.log("ws:", ws);
+    }
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+
+      if (!data.type) {
+        console.log("Recieved message with no type from redis server");
+        return;
+      }
+
+      if (data.type === "error") {
+        if (data.code && data.message) {
+          console.log(`Redis server returned error: ${data.code}: ${data.message}`);
+        } else {
+          console.log("Redis server returned unknown error");
+        }
+
+      } else if (data.type === "seedUpdate") {
+        if (!data.matt || !data.hail) {
+          console.log("Redis server response lacked matt or hail data");
+          return;
+        }
+
+        if (!Array.isArray(data.matt) || !Array.isArray(data.hail)) {
+          console.log("Redis server returned invalid data format for matt or hail");
+          return;
+        }
+
+        if (data.matt.length != seedsMatt.length || data.hail.length != seedsHail.length) {
+          console.log("Redis server returned invalid data length");
+          return;
+        }
+
+        for (var i = 0; i < data.matt.length; i++) {
+          if (typeof data.matt[i] !== "number") {
+            console.log("Redis server returned invalid internal data type");
+            return;
+          }
+          if (typeof data.hail[i] !== "number") {
+            console.log("Redis server returned invalid internal data type");
+            return;
+          }
+        }
+
+        let mattTemp: number[] = Array(9);
+        let hailTemp: number[] = Array(9);
+        for (var i = 0; i < data.matt.length; i++) {
+          mattTemp[i] = data.matt[i] + seedsMattInc[i];
+          hailTemp[i] = data.hail[i] + seedsHailInc[i];
+        }
+
+        setSeedsMatt([...mattTemp]);
+        setSeedsHail([...hailTemp]);
+      }
+    };
+
+    ws.onclose = () => console.log("Disconnected from websocket server");
+
+    return () => {
+      console.log("Running cleanup");
+      if (ws.readyState == 1) {
+        ws.close();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     setIsAnniversary(days == 0 && hours == 0 && minutes == 0 && seconds == 0);
