@@ -62,3 +62,12 @@
 	text-wrap: nowrap;
 	/*border: 1px solid red;*/
 }
+
+.seedCount {
+	font-family: GlobalSV;
+	font-size: 3.5vh;
+	margin-top: 0px;
+	margin-bottom: 7px;
+	color: #6b3710;
+	text-shadow: 1px 1px 3px #4b270b;
+}
