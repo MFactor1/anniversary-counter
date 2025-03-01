@@ -10,6 +10,8 @@ import useCountdown from './utils/countdown'
 import Character from './components/Character'
 import SeedCounters from './components/SeedCounters'
 
+const backendURL = process.env.BACKEND_URL || "ws://localhost:3001/";
+
 let ws: WebSocket;
 let seedsMattInc: number[] = new Array(9).fill(0);
 let seedsHailInc: number[] = new Array(9).fill(0);
@@ -56,11 +58,11 @@ function App() {
     console.log("starting useeffect");
     if (!ws) {
       console.log("creating websocket");
-      ws = new WebSocket("ws://localhost:3001/");
+      ws = new WebSocket(backendURL);
     }
     if (ws.readyState == 3) {
       console.log("recreating websocket");
-      ws = new WebSocket("ws://localhost:3001/");
+      ws = new WebSocket(backendURL);
     }
     ws.onopen = () => {
       console.log("Connected to websocket server");
