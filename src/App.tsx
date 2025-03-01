@@ -12,6 +12,8 @@ import SeedCounters from './components/SeedCounters'
 
 const backendURL = process.env.BACKEND_URL || "ws://localhost:3001/";
 
+console.log(backendURL);
+
 let ws: WebSocket;
 let seedsMattInc: number[] = new Array(9).fill(0);
 let seedsHailInc: number[] = new Array(9).fill(0);
