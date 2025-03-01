@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import dotenv from 'dotenv';
 import './App.css'
 import textBG from './assets/StardewTextBG.png'
 import hailey from './assets/Hailey.png'
@@ -9,6 +10,8 @@ import matthewBlush from './assets/MattBlush.png'
 import useCountdown from './utils/countdown'
 import Character from './components/Character'
 import SeedCounters from './components/SeedCounters'
+
+dotenv.config();
 
 const backendURL = process.env.BACKEND_URL || "ws://localhost:3001/";
 
