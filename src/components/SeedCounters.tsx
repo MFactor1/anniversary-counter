@@ -26,11 +26,11 @@ interface CounterProps {
 const Counter: React.FC<CounterProps> = ({ image, count, flipped, style }) => {
   return (
     <div style = {{ ...style, display: "flex", justifyContent: flipped ? "left" : "right", alignItems: "center" }}>
-      {flipped ? <img src = {image} style = {{ width: "6vh", margin: "0px", filter: "drop-shadow(-0.1rem 0.1rem 0.25rem black)" }} /> : null}
+      {flipped ? <img src = {image} style = {{ maxHeight: "8vh", maxWidth: "12vw", margin: "0px", filter: "drop-shadow(-0.1rem 0.1rem 0.25rem black)" }} /> : null}
       <h1 className='seedCount' style = {{ margin: "0px" }}>
         {count}
       </h1>
-      {flipped ? null : <img src = {image} style = {{ width: "6vh", margin: "0px", filter: "drop-shadow(0.1rem 0.1rem 0.25rem black)" }} />}
+      {flipped ? null : <img src = {image} style = {{ maxHeight: "8vh", maxWidth: "12vw", margin: "0px", filter: "drop-shadow(0.1rem 0.1rem 0.25rem black)" }} />}
     </div>
   );
 };

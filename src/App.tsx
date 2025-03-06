@@ -145,7 +145,7 @@ function App() {
     <>
       <div className='headText'>
         <div className='textBGImg'>
-          <img src={textBG} style={{width: '55vh'}}/>
+          <img src={textBG} style={{width: '35vw'}}/>
         </div>
         <div className='textOnImage'>
           <h1 className='title1'>
@@ -155,7 +155,7 @@ function App() {
       </div>
       <div className='headText'>
         <div className='textBGImg'>
-          <img src={textBG} style={{width: '32vh'}}/>
+          <img src={textBG} style={{width: '25vw'}}/>
         </div>
         <div className='textOnImage'>
           <h1 className='title2'>
@@ -186,8 +186,8 @@ function App() {
           { isAnniversary ? 'Happy Anniversary!!' : days + 'd, ' + hours + 'h, ' + minutes + 'm, ' + seconds + 's' }
         </p>
       </div>
-      <SeedCounters seeds = {seedsHail} style = {{ position: "absolute", right: "3vw" }}/>
-      <SeedCounters seeds = {seedsMatt} flipped = {true} style = {{ position: "absolute", left: "3vw" }}/>
+      <SeedCounters seeds = {seedsHail} style = {{ position: "absolute", bottom: "12vh", right: "3vw" }}/>
+      <SeedCounters seeds = {seedsMatt} flipped = {true} style = {{ position: "absolute", bottom: "10vh", left: "3vw" }}/>
     </>
   )
 }
