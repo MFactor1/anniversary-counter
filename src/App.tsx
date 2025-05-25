@@ -5,12 +5,14 @@ import hailey from './assets/Hailey.png'
 import matthew from './assets/Matthew.png'
 import haileyBlush from './assets/HaileyBlush.png'
 import matthewBlush from './assets/MattBlush.png'
+import StardewTextBox from './assets/StardewTextBox.png'
+import StardewPage from './assets/StardewPage.png'
 
 import useCountdown from './utils/countdown'
 import Character from './components/Character'
 import SeedCounters from './components/SeedCounters'
-
-console.log(import.meta.env.VITE_BACKEND_URL);
+import TogetherSince from './components/TogetherSince'
+import {body} from 'motion/react-client'
 
 const backendURL = import.meta.env.VITE_BACKEND_URL || "ws://localhost:3001/";
 
@@ -24,9 +26,24 @@ let seedUpdate: boolean = false;
 function App() {
   const [seedsMatt, setSeedsMatt] = useState<number[]>(Array(9).fill(0));
   const [seedsHail, setSeedsHail] = useState<number[]>(Array(9).fill(0));
+  const [seedsValid, setSeedsValid] = useState(false);
+  const [loading, setLoading] = useState("");
   const { days, hours, minutes, seconds } = useCountdown(7, 1, 0, 0);
-  //const { days, hours, minutes, seconds } = useCountdown(2, 13, 0, 4);
   const [isAnniversary, setIsAnniversary] = useState(false);
+
+  const updateLoading = () => {
+      setLoading((prevLoading) => {
+      if (prevLoading == '') {
+        return '.';
+      } else if (prevLoading == '.') {
+        return '..';
+      } else if (prevLoading == '..') {
+        return '...';
+      } else {
+        return '';
+      }
+    })
+  }
 
   const newSeed = (id: string, seed: number) => {
     if (id == "matthew") {
@@ -40,31 +57,12 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    const serverUpdate = () => {
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        if (seedUpdate) {
-          ws.send(JSON.stringify({ type: "increment", matt: seedsMattInc, hail: seedsHailInc }));
-          seedUpdate = false;
-          seedsMattInc.fill(0);
-          seedsHailInc.fill(0);
-        }
-      } else {
-        console.log("Socket closed or null");
-      }
-    }
-
-    const updateInterval = setInterval(serverUpdate, 1000);
-    return () => clearInterval(updateInterval);
-  }, []);
-
-  useEffect(() => {
-    console.log("starting useeffect");
+  const createWebsocket = () => {
     if (!ws) {
       console.log("creating websocket");
       ws = new WebSocket(backendURL);
     }
-    if (ws.readyState == 3) {
+    if (ws.readyState === WebSocket.CLOSED) {
       console.log("recreating websocket");
       ws = new WebSocket(backendURL);
     }
@@ -75,6 +73,7 @@ function App() {
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
+      console.log("recieved message:", data)
 
       if (!data.type) {
         console.log("Recieved message with no type from redis server");
@@ -124,17 +123,42 @@ function App() {
 
         setSeedsMatt([...mattTemp]);
         setSeedsHail([...hailTemp]);
+        setSeedsValid(true);
       }
-    };
+    }
 
-    ws.onclose = () => console.log("Disconnected from websocket server");
+    ws.onclose = (event) => {
+      console.log("Websocket closed:", event.code, event.reason);
+      setTimeout(createWebsocket, 5000);
+    }
+  }
 
+  useEffect(() => {
+    createWebsocket()
+
+    const serverUpdate = () => {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        if (seedUpdate) {
+          ws.send(JSON.stringify({ type: "increment", matt: seedsMattInc, hail: seedsHailInc }));
+          seedUpdate = false;
+          seedsMattInc.fill(0);
+          seedsHailInc.fill(0);
+        }
+      } else {
+        console.log("No connection to backend server");
+        setSeedsValid(false);
+      }
+    }
+
+    const updateInterval = setInterval(serverUpdate, 1000);
+    const loadingInterval = setInterval(updateLoading, 1000);
     return () => {
-      console.log("Running cleanup");
+      clearInterval(updateInterval);
+      clearInterval(loadingInterval);
       if (ws.readyState == 1) {
         ws.close();
       }
-    };
+    }
   }, []);
 
   useEffect(() => {
@@ -145,7 +169,7 @@ function App() {
     <>
       <div className='headText'>
         <div className='textBGImg'>
-          <img src={textBG} style={{width: '35vw'}}/>
+          <img src={textBG} style={{width: '55vh'}}/>
         </div>
         <div className='textOnImage'>
           <h1 className='title1'>
@@ -155,7 +179,7 @@ function App() {
       </div>
       <div className='headText'>
         <div className='textBGImg'>
-          <img src={textBG} style={{width: '25vw'}}/>
+          <img src={textBG} style={{width: '32vh'}}/>
         </div>
         <div className='textOnImage'>
           <h1 className='title2'>
@@ -163,6 +187,32 @@ function App() {
           </h1>
         </div>
       </div>
+      {seedsValid ? null :
+        <div className='loadingText' style={{ marginTop: "4vh" }}>
+          <h1 className='title3'>
+            Connecting to backend server{loading}
+          </h1>
+          <h1 className='title4'>
+            This may take up to 2 minutes{loading}
+          </h1>
+        </div>
+      }
+      {/*
+      <div className='textBGImg' style={{ position: 'absolute', bottom: '45vh', left: "0vw", right: "0vw" }}>
+        <img src={textBG} style={{ height: '16.5vh' }}/>
+      </div>
+       */}
+      <div className='counter'>
+        <p className='counterText'>
+          { isAnniversary ? 'Happy Anniversary!!' : days + 'd, ' + hours + 'h, ' + minutes + 'm, ' + seconds + 's' }
+        </p>
+      </div>
+      <div className='textBGImg' style={{ position: 'absolute', bottom: '7vh', left: "0vw", right: "0vw" }}>
+        <img src={StardewTextBox} style={{ height: '24vh', width: '36vh'}}/>
+      </div>
+      <TogetherSince style = {{ position: "absolute", bottom: "10vh", left: "0vw", right: "0vw" }}/>
+      <SeedCounters seeds = {seedsHail} valid = {seedsValid} loading = {loading} style = {{ position: "absolute", right: "3vw", top: "17vh" }}/>
+      <SeedCounters seeds = {seedsMatt} valid = {seedsValid} loading = {loading} flipped = {true} style = {{ position: "absolute", left: "3vw", top: "17vh" }}/>
       <div className='characters'>
         <Character
           isAnniversary = {isAnniversary}
@@ -181,13 +231,6 @@ function App() {
           style = {{ position: "absolute", bottom: "0px", left: "10vw", width: "256px", height: "256px"}}
         />
       </div>
-      <div className='counter'>
-        <p className='counterText'>
-          { isAnniversary ? 'Happy Anniversary!!' : days + 'd, ' + hours + 'h, ' + minutes + 'm, ' + seconds + 's' }
-        </p>
-      </div>
-      <SeedCounters seeds = {seedsHail} style = {{ position: "absolute", bottom: "12vh", right: "3vw" }}/>
-      <SeedCounters seeds = {seedsMatt} flipped = {true} style = {{ position: "absolute", bottom: "10vh", left: "3vw" }}/>
     </>
   )
 }

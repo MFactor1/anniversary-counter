@@ -1,4 +1,4 @@
-import { CSSProperties } from 'react';
+import { CSSProperties, useState, useEffect } from 'react';
 
 import seed1 from '../assets/seed1.png'
 import seed2 from '../assets/seed2.png'
@@ -12,13 +12,15 @@ import seed9 from '../assets/seed9.png'
 
 interface SeedCountersProps {
   seeds: number[]
+  valid: boolean
+  loading: string
   flipped?: boolean
   style?: CSSProperties
 }
 
 interface CounterProps {
   image: string
-  count: number
+  count: number | string
   flipped: boolean
   style?: CSSProperties
 }
@@ -35,21 +37,21 @@ const Counter: React.FC<CounterProps> = ({ image, count, flipped, style }) => {
   );
 };
 
-const SeedCounters: React.FC<SeedCountersProps> = ({ seeds, flipped = false, style }) => {
+const SeedCounters: React.FC<SeedCountersProps> = ({ seeds, valid, loading, flipped = false, style }) => {
   return (
     <div style = {style}>
       <h1 className='seedCount' style = {{ margin: "0px" }}>
-        Total: {seeds.reduce((prev, curr) => prev + curr)}
+        Total: {valid ? seeds.reduce((prev, curr) => prev + curr) : loading}
       </h1>
-        <Counter image = {seed1} count = {seeds[0]} flipped = {flipped}/>
-        <Counter image = {seed2} count = {seeds[1]} flipped = {flipped}/>
-        <Counter image = {seed3} count = {seeds[2]} flipped = {flipped}/>
-        <Counter image = {seed4} count = {seeds[3]} flipped = {flipped}/>
-        <Counter image = {seed5} count = {seeds[4]} flipped = {flipped}/>
-        <Counter image = {seed6} count = {seeds[5]} flipped = {flipped}/>
-        <Counter image = {seed7} count = {seeds[6]} flipped = {flipped}/>
-        <Counter image = {seed8} count = {seeds[7]} flipped = {flipped}/>
-        <Counter image = {seed9} count = {seeds[8]} flipped = {flipped}/>
+        <Counter image = {seed1} count = {valid ? seeds[0] : loading} flipped = {flipped}/>
+        <Counter image = {seed2} count = {valid ? seeds[1] : loading} flipped = {flipped}/>
+        <Counter image = {seed3} count = {valid ? seeds[2] : loading} flipped = {flipped}/>
+        <Counter image = {seed4} count = {valid ? seeds[3] : loading} flipped = {flipped}/>
+        <Counter image = {seed5} count = {valid ? seeds[4] : loading} flipped = {flipped}/>
+        <Counter image = {seed6} count = {valid ? seeds[5] : loading} flipped = {flipped}/>
+        <Counter image = {seed7} count = {valid ? seeds[6] : loading} flipped = {flipped}/>
+        <Counter image = {seed8} count = {valid ? seeds[7] : loading} flipped = {flipped}/>
+        <Counter image = {seed9} count = {valid ? seeds[8] : loading} flipped = {flipped}/>
     </div>
   );
 };
