@@ -12,6 +12,7 @@ import useCountdown from './utils/countdown'
 import Character from './components/Character'
 import SeedCounters from './components/SeedCounters'
 import TogetherSince from './components/TogetherSince'
+import useIsMobile from './components/IsMobile'
 import {body} from 'motion/react-client'
 
 const backendURL = import.meta.env.VITE_BACKEND_URL || "ws://localhost:3001/";
@@ -30,6 +31,7 @@ function App() {
   const [loading, setLoading] = useState("");
   const { days, hours, minutes, seconds } = useCountdown(7, 1, 0, 0);
   const [isAnniversary, setIsAnniversary] = useState(false);
+  const isMobile = useIsMobile();
 
   const updateLoading = () => {
       setLoading((prevLoading) => {
@@ -169,25 +171,25 @@ function App() {
     <>
       <div className='headText'>
         <div className='textBGImg'>
-          <img src={textBG} style={{width: '55vh'}}/>
+          <img src={textBG} style={{ width: isMobile ? '90vw' : '55vh' }}/>
         </div>
         <div className='textOnImage'>
-          <h1 className='title1'>
+          <h1 className='title1' style={{ fontSize: isMobile ? '10vw' : '6vh' }}>
             Anniversary Counter
           </h1>
         </div>
       </div>
       <div className='headText'>
         <div className='textBGImg'>
-          <img src={textBG} style={{width: '32vh'}}/>
+          <img src={textBG} style={{ width: isMobile ? '70vw' : '32vh' }}/>
         </div>
         <div className='textOnImage'>
-          <h1 className='title2'>
+          <h1 className='title2' style={{ fontSize: isMobile ? '7.6vw' : '3.5vh' }}>
             Matthew @ Hailey
           </h1>
         </div>
       </div>
-      {seedsValid ? null :
+      {seedsValid || isMobile ? null :
         <div className='loadingText' style={{ marginTop: "4vh" }}>
           <h1 className='title3'>
             Connecting to backend server{loading}
@@ -197,13 +199,17 @@ function App() {
           </h1>
         </div>
       }
-      {/*
-      <div className='textBGImg' style={{ position: 'absolute', bottom: '45vh', left: "0vw", right: "0vw" }}>
-        <img src={textBG} style={{ height: '16.5vh' }}/>
-      </div>
-       */}
+      { isMobile ?
+        <div className='loadingText' style={{ marginTop: "6vh", width: '100vw' }}>
+          <h1 className='title3'>
+            Mobile is not currently supported. <br/>
+            For the full experience, use a desktop. <br />
+            Sorry :(
+          </h1>
+        </div>
+      : null }
       <div className='counter'>
-        <p className='counterText'>
+        <p className='counterText' style={{ fontSize: isMobile ? "13vw" : "7vw" }}>
           { isAnniversary ? 'Happy Anniversary!!' : days + 'd, ' + hours + 'h, ' + minutes + 'm, ' + seconds + 's' }
         </p>
       </div>
@@ -211,26 +217,32 @@ function App() {
         <img src={StardewTextBox} style={{ height: '24vh', width: '36vh'}}/>
       </div>
       <TogetherSince style = {{ position: "absolute", bottom: "10vh", left: "0vw", right: "0vw" }}/>
-      <SeedCounters seeds = {seedsHail} valid = {seedsValid} loading = {loading} style = {{ position: "absolute", right: "3vw", top: "17vh" }}/>
-      <SeedCounters seeds = {seedsMatt} valid = {seedsValid} loading = {loading} flipped = {true} style = {{ position: "absolute", left: "3vw", top: "17vh" }}/>
-      <div className='characters'>
-        <Character
-          isAnniversary = {isAnniversary}
-          baseImage = {hailey}
-          secondaryImage = {haileyBlush}
-          id = "hailey"
-          newSeedCallback = {newSeed}
-          style = {{ position: "absolute", bottom: "0px", right: "10vw", width: "256px", height: "256px"}}
-        />
-        <Character
-          isAnniversary = {isAnniversary}
-          baseImage = {matthew}
-          secondaryImage = {matthewBlush}
-          id = "matthew"
-          newSeedCallback = {newSeed}
-          style = {{ position: "absolute", bottom: "0px", left: "10vw", width: "256px", height: "256px"}}
-        />
-      </div>
+      { isMobile ? null :
+        <>
+          <SeedCounters seeds = {seedsHail} valid = {seedsValid} loading = {loading} style = {{ position: "absolute", right: "3vw", top: "17vh" }}/>
+          <SeedCounters seeds = {seedsMatt} valid = {seedsValid} loading = {loading} flipped = {true} style = {{ position: "absolute", left: "3vw", top: "17vh" }}/>
+        </>
+      }
+      { isMobile ? null :
+        <div className='characters'>
+          <Character
+            isAnniversary = {isAnniversary}
+            baseImage = {hailey}
+            secondaryImage = {haileyBlush}
+            id = "hailey"
+            newSeedCallback = {newSeed}
+            style = {{ position: "absolute", bottom: "0px", right: "10vw", width: "256px", height: "256px"}}
+          />
+          <Character
+            isAnniversary = {isAnniversary}
+            baseImage = {matthew}
+            secondaryImage = {matthewBlush}
+            id = "matthew"
+            newSeedCallback = {newSeed}
+            style = {{ position: "absolute", bottom: "0px", left: "10vw", width: "256px", height: "256px"}}
+          />
+        </div>
+      }
     </>
   )
 }
